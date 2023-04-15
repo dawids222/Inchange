@@ -7,4 +7,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+    <PackageReference Include="IronOcr" Version="2023.4.13" />
+    <PackageReference Include="IronOcr.Languages.Polish" Version="2020.11.2" />
+  </ItemGroup>
+
 </Project>

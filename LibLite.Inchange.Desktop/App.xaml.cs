@@ -1,4 +1,6 @@
-﻿namespace LibLite.Inchange.Desktop
+﻿using System.Windows;
+
+namespace LibLite.Inchange.Desktop
 {
     /// <summary>
     /// Interaction logic for App.xaml
