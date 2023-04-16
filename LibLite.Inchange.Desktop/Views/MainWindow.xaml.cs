@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace LibLite.Inchange.Desktop
@@ -17,6 +19,7 @@ namespace LibLite.Inchange.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ProgressWindow _progress = new();
         private readonly IronTesseract _reader = new()
         {
             Language = OcrLanguage.Polish,
@@ -33,45 +36,57 @@ namespace LibLite.Inchange.Desktop
                 Filter = "Invoices|*.pdf;*.jpg;*.jpeg;*.png",
             };
 
-            var progress = new ProgressWindow();
-
             if (dialog.ShowDialog() == true)
             {
                 // TODO: Make it do anything... Now it freeze.
-                progress.Show();
+                _progress.Show();
 
                 var files = dialog.FileNames;
                 // TODO: Add files processing here.
 
-                foreach (var file in files)
+                var context = SynchronizationContext.Current;
+                ThreadPool.QueueUserWorkItem(async _ =>
                 {
-                    // TODO: Extract?
-                    var content = _reader.Read(file).Text;
-                    // Check if even is an invoce (has all the keywords)
-                    var isInvoice = IsInvoice(content);
-                    if (!isInvoice) { continue; }
+                    await Parallel.ForEachAsync(files,
+                        new ParallelOptions { MaxDegreeOfParallelism = 4 },
+                        (file, token) =>
+                        {
+                            // TODO: Extract?
+                            var content = _reader.Read(file).Text;
+                            // Check if even is an invoce (has all the keywords)
 
+                            //var isInvoice = IsInvoice(content);
+                            //if (!isInvoice) { continue; }
 
-                    var directory = Path.GetDirectoryName(file);
-                    var info = Directory.CreateDirectory($"{directory}\\Result");
+                            var directory = Path.GetDirectoryName(file);
+                            var info = Directory.CreateDirectory($"{directory}\\Result");
 
-                    var name = CreateFileName(content);
-                    var extension = Path.GetExtension(file);
-                    var path = $"{info.FullName}\\{name}{extension}";
+                            var name = CreateFileName(content);
+                            var extension = Path.GetExtension(file);
+                            var path = $"{info.FullName}\\{name}{extension}";
 
-                    File.Copy(file, path, true);
-                }
+                            File.Copy(file, path, true);
+
+                            context!.Post(_ =>
+                            {
+                                _progress.AddProgress(100 / files.Length);
+                            }, null);
+
+                            return ValueTask.CompletedTask;
+                        });
+
+                    context!.Post(_ =>
+                    {
+                        _progress.Hide();
+                        MessageBox.Show("Done! :)");
+                        Environment.Exit(0);
+                    }, null);
+                });
             }
-
-            progress.Hide();
-
-            MessageBox.Show("Done! :)");
-
-            Environment.Exit(0);
         }
 
         // TODO: Rename.
-        private string CreateFileName(string content)
+        private static string CreateFileName(string content)
         {
             // Get issuer, number, issue date
             var invoice = GetInvoiceData(content);
@@ -135,7 +150,6 @@ namespace LibLite.Inchange.Desktop
         };
         private static DateOnly GetFirstDate(string content)
         {
-
             var regexes = new Regex[]
             {
                 new Regex(@"\b\d{2}[\.\/-]\d{2}[\.\/-]\d{4}\b"),
