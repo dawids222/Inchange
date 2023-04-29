@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using IronOcr;
+﻿using IronOcr;
 using LibLite.Inchange.Desktop.Views;
 using Microsoft.Win32;
 using System;
@@ -54,6 +53,7 @@ namespace LibLite.Inchange.Desktop
                             // TODO: Extract?
                             var content = _reader.Read(file).Text;
                             // Check if even is an invoce (has all the keywords)
+                            // What if is not an invoive
 
                             //var isInvoice = IsInvoice(content);
                             //if (!isInvoice) { continue; }
@@ -62,6 +62,8 @@ namespace LibLite.Inchange.Desktop
                             var info = Directory.CreateDirectory($"{directory}\\Result");
 
                             var name = CreateFileName(content);
+                            // TODO: What if there is any kind of error?
+
                             var extension = Path.GetExtension(file);
                             var path = $"{info.FullName}\\{name}{extension}";
 
@@ -88,12 +90,9 @@ namespace LibLite.Inchange.Desktop
         // TODO: Rename.
         private static string CreateFileName(string content)
         {
-            // Get issuer, number, issue date
             var invoice = GetInvoiceData(content);
-            // Form a filename
             var issued = invoice.Issued.ToString("yyyy.MM.dd");
             var number = invoice.Number.Replace('/', '-');
-            var issuer = invoice.Issuer.Pascalize();
             return $"{issued}_{number}";
         }
 
@@ -114,19 +113,16 @@ namespace LibLite.Inchange.Desktop
         {
             public string Number { get; set; } = string.Empty;
             public DateOnly Issued { get; set; }
-            public string Issuer { get; set; } = string.Empty;
         }
         private static Invoice GetInvoiceData(string content)
         {
             var number = GetNumber(content);
             var issued = GetFirstDate(content);
-            var issuer = "";
 
             return new Invoice
             {
                 Number = number,
                 Issued = issued,
-                Issuer = issuer,
             };
         }
 
@@ -155,11 +151,18 @@ namespace LibLite.Inchange.Desktop
                 new Regex(@"\b\d{2}[\.\/-]\d{2}[\.\/-]\d{4}\b"),
                 new Regex(@"\b\d{4}[\.\/-]\d{2}[\.\/-]\d{2}\b"),
             };
-            var match = regexes
-                .Select(x => x.Match(content))
+            var matches = regexes
+                .Select(x => x.Matches(content))
+                .SelectMany(x => x.ToList())
+                .ToList();
+            var datetime = matches
                 .Where(x => x.Success)
-                .First();
-            var datetime = DateTime.ParseExact(match.Value, _datetimeFormats, CultureInfo.InvariantCulture);
+                .Select(x =>
+                {
+                    DateTime.TryParseExact(x.Value, _datetimeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var datetime);
+                    return datetime;
+                })
+                .First(x => x != default);
             return DateOnly.FromDateTime(datetime);
         }
     }

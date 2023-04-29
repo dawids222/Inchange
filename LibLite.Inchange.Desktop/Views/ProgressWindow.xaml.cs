@@ -13,11 +13,6 @@ namespace LibLite.Inchange.Desktop.Views
             InitializeComponent();
         }
 
-        public void SetProgress(double value)
-        {
-            ProgressBar.Value = value;
-        }
-
         public void AddProgress(double value)
         {
             ProgressBar.Value += value;
