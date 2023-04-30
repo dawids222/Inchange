@@ -13,8 +13,8 @@ namespace LibLite.Inchange.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ProgressWindow _progresWindow = new();
-        private readonly OpenFileDialog _fileDialog = new();
+        private ProgressWindow _progresWindow = new();
+        private OpenFileDialog _fileDialog = new();
 
         private readonly IInvoiceService _invoiceService = new InvoiceService();
         private readonly IFileService _fileService = new FileService(new TesseractFileReader());
@@ -22,6 +22,11 @@ namespace LibLite.Inchange.Desktop
         public MainWindow()
         {
             InitializeComponent();
+            StartProcessing();
+        }
+
+        private void StartProcessing()
+        {
             Initialize();
             OpenFileDialog();
             ProcessFiles();
@@ -31,13 +36,17 @@ namespace LibLite.Inchange.Desktop
         {
             Visibility = Visibility.Hidden;
 
-            _fileDialog.Multiselect = true;
-            _fileDialog.Filter = "Invoices|*.pdf;*.jpg;*.jpeg;*.png";
+            _fileDialog = new()
+            {
+                Multiselect = true,
+                Filter = "Invoices|*.pdf;*.jpg;*.jpeg;*.png"
+            };
 
+            _progresWindow = new();
             _progresWindow.OkClick += (_, _) =>
             {
                 _progresWindow.Hide();
-                Environment.Exit(0);
+                StartProcessing();
             };
         }
 
