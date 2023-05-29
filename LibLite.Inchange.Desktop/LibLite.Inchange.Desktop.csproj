@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <AssemblyName>Inchange</AssemblyName>
+	<Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

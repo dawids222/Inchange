@@ -50,6 +50,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -190,15 +198,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Inchange"
-        "ProductCode" = "8:{38F2C068-A4BF-48D7-885D-2BA3EA64498B}"
-        "PackageCode" = "8:{4A9859AD-88DF-45C6-8CA9-24855DF8E299}"
+        "ProductCode" = "8:{FD357BF7-BE40-47E7-9A07-3796CD935530}"
+        "PackageCode" = "8:{4650E5EB-15B0-4F88-A019-E7A45BE79261}"
         "UpgradeCode" = "8:{DB955505-492E-4AE9-96AB-A3272CCF86B0}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:LibLite"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

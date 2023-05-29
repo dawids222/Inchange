@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LibLite.Inchange.Desktop.Views
 {
@@ -29,10 +30,27 @@ namespace LibLite.Inchange.Desktop.Views
             ProgressBar.Value = value;
         }
 
-        public void AddEntry(string entry)
+        public void AddSuccessEntry(string entry)
         {
-            ProgressTextBlock.Text += Environment.NewLine;
-            ProgressTextBlock.Text += entry;
+            AddEntry($"[Success] : {entry}", Brushes.Green);
+        }
+
+        public void AddErrorEntry(string entry)
+        {
+            ProgressBar.Foreground = Brushes.Red;
+            IndeterminateProgressBar.Foreground = Brushes.Red;
+            AddEntry($"[Error] : {entry}", Brushes.Red);
+        }
+
+        private void AddEntry(string entry, Brush foreground)
+        {
+            var textBlock = new TextBlock
+            {
+                Text = entry,
+                FontSize = 12,
+                Foreground = foreground
+            };
+            ProgressTextStackPanel.Children.Add(textBlock);
         }
 
         private void ProgressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

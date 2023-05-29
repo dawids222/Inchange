@@ -73,11 +73,11 @@ namespace LibLite.Inchange.Desktop
                             var document = await _fileService.GetDocumentAsync(file);
                             var name = _invoiceService.GenerateName(document);
                             _fileService.Copy(document, name);
-                            Synchronize(context, () => _progresWindow.AddEntry($"[Success] : {document.Name} -> {name}"));
+                            Synchronize(context, () => _progresWindow.AddSuccessEntry($"{document.Name} -> {name}"));
                         }
                         catch (Exception ex)
                         {
-                            Synchronize(context, () => _progresWindow.AddEntry($"[Error] : {System.IO.Path.GetFileName(file)} -> {ex.Message}"));
+                            Synchronize(context, () => _progresWindow.AddErrorEntry($"{System.IO.Path.GetFileName(file)} -> {ex.Message}"));
                         }
                         Synchronize(context, () => _progresWindow.AddProgress(100 / _fileDialog.FileNames.Length));
                     });

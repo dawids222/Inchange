@@ -17,7 +17,7 @@
         <ProgressBar Grid.Row="0" x:Name="ProgressBar" Minimum="0" Maximum="100" Value="0"/>
         <ProgressBar Grid.Row="0" x:Name="IndeterminateProgressBar" IsIndeterminate="true" Opacity="0.05"/>
         <ScrollViewer Grid.Row="1" Margin="0 10" HorizontalScrollBarVisibility="Visible">
-            <TextBlock x:Name="ProgressTextBlock" Margin="0 0 10 10"/>
+            <StackPanel x:Name="ProgressTextStackPanel" Orientation="Vertical" Margin="0 0 10 10"/>
         </ScrollViewer>
         <Button Grid.Row="2" x:Name="OkButton" Content="OK" Visibility="Collapsed"/>
     </Grid>
